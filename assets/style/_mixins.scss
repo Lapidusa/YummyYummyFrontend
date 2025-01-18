@@ -1,0 +1,10 @@
+//@use "../assets/style/mixins" as *;
+
+@mixin btn-border{
+  @apply text-base border-main-contrast rounded-2xl text-main-contrast border border-solid
+  hover:bg-main-contrast hover:text-white
+}
+@mixin btn{
+  @apply text-base bg-main-contrast rounded-2xl text-white border border-solid
+  hover:bg-main-contrast
+}

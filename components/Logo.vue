@@ -2,13 +2,13 @@
   <a class="logo">
     <div class="logo-container">
       <div class="logo-container__image">
-        <img src="../../public/logo.svg" alt="logo">
+        <img src="../assets/logo.svg" alt="logo">
       </div>
       <div class="logo-container__text">
         <div class="logo-container__text-title">
           YummyYummy
         </div>
-        <div class="logo-container__text-discription">
+        <div class="logo-container__text-description">
           вкусней уже некуда
         </div>
       </div>
@@ -42,7 +42,7 @@
         letter-spacing: 0.24px;
       }
 
-      &-discription{
+      &-description{
         margin-top: -4px;
         color: var(--font-secondary-alt);
       }

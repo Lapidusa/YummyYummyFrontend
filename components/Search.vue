@@ -43,11 +43,11 @@
     @apply relative z-10;
 
     &__icon{
-      background-image: url("../../public/content/icons/search.svg");
+      background-image: url("../assets/icons/search.svg");
       width: 16px;
       height: 16px;
       position: absolute;
-      top: 18px;
+      top: 16px;
       left: 20px;
       z-index: 1;
     }
@@ -70,7 +70,7 @@
         appearance: none;
         height: 12px;
         width: 12px;
-        background-image: url("../../public/content/icons/closeSearch.svg");
+        background-image: url("../assets/icons/closeSearch.svg");
       }
     }
   }

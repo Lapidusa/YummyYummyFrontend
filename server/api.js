@@ -1,6 +1,6 @@
 import axios from "axios";
-import listUrl from "~/server/ListURL.js";
-import {Logout} from "~/server/responsesAPI.js";
+import listUrl from "../server/ListURL.js";
+// import {Logout} from "~/server/responsesAPI.js";
 
 const api = axios.create({
     baseURL: `${listUrl.apiUrl}`,

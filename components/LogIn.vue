@@ -17,7 +17,7 @@
 
     </button>
 
-    <NuxtLink  v-if="isAdmin" to="/admin"
+    <NuxtLink v-if="isAdmin" to="/admin/main"
         class="btnAdmin"
     >
       <div class="btnAdmin__icon"></div>
@@ -27,22 +27,19 @@
   </div>
   <div
       v-if="isDropdownOpen"
-      class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44"
+      class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow"
       @mouseenter="openDropdown"
       @mouseleave="startCloseDropdown"
   >
     <ul class="mt-2.5 py-2 text-sm">
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-background-dark-light dark:hover:text-black">Dashboard</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-background-dark-light dark:hover:text-main-contrast">Мой профиль</a>
       </li>
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-background-dark-light dark:hover:text-black">Settings</a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-background-dark-light dark:hover:text-main-contrast">Заказы</a>
       </li>
       <li>
-        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-background-dark-light dark:hover:text-black">Earnings</a>
-      </li>
-      <li>
-        <a href="#" @click="LogOut" class="block px-4 py-2 hover:bg-background-dark-light dark:hover:bg-background-dark-light dark:hover:text-black">Выйти</a>
+        <a href="#" @click="LogOut" class="block px-4 py-2 hover:bg-background-dark-light dark:hover:bg-background-dark-light dark:hover:text-main-contrast">Выйти</a>
       </li>
     </ul>
   </div>
@@ -55,24 +52,15 @@
   >
     <template v-if="!changeModal">
       <div class="bg-white rounded-lg shadow-lg p-6 w-96 z-50 relative">
-        <h2 class="text-xl font-semibold mb-4">Вход в аккаунт</h2>
+        <h2 class="text-3xl font-semibold mb-4">Вход в аккаунт</h2>
         <p class="mb-4">Введите номер телефона, чтобы войти или зарегистрироваться</p>
-        <input
-            type="tel"
-            placeholder="+7 (___) ___-__-__"
-            class="border border-gray-300 rounded-md p-2 w-full mb-4"
-            v-model="phoneNumber"
-            @input="mask"
-            @focus="mask"
-            @blur="blurHandler"
-            ref="phoneInput"
-        />
+        <PhoneNumber v-model="userPhoneNumber"/>
         <button @click="SendCode()" class="btnLogIn w-full justify-center">
           <p class="btnLogIn__text">Получить код в SMS</p>
         </button>
 
         <div @click="closeModal" type="button" class="cursor-pointer">
-          <img class="closeModal" src="../../public/content/icons/closeWhite.svg" alt="">
+          <img class="closeModal" src="../assets/icons/closeWhite.svg" alt="">
         </div>
       </div>
 
@@ -96,7 +84,7 @@
           <p class="btnLogIn__text">Получить код в SMS</p>
         </button>
         <div @click="closeModal" type="button" class="cursor-pointer">
-          <img class="closeModal" src="../../public/content/icons/closeWhite.svg" alt="">
+          <img class="closeModal" src="../assets/icons/closeWhite.svg" alt="">
         </div>
       </div>
     </template>
@@ -105,16 +93,15 @@
 </template>
 
 <script setup>
-import {getConfCode, Logout, useProfile, Verify} from "~/server/responsesAPI.js";
+import {getConfCode, Logout, useProfile, Verify} from "../server/responsesAPI.js";
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-// import router from "#app/plugins/router.js";
+import PhoneNumber from "~/components/PhoneNumber.vue";
 
 const router = useRouter();
 const isModalOpen = ref(false);
 const search = ref(null);
-const phoneNumber = ref('');
-const formattedPhoneNumber = ref('');
+const userPhoneNumber = ref('');
 const changeModal = ref(false);
 const code = ref(['', '', '', '', '', '']);
 const authorized = ref(false);
@@ -148,65 +135,9 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalOpen.value = false;
+  search.value[0].style.zIndex = '10';
 };
 
-const mask = (event) => {
-  const input = event.target;
-  const keyCode = event.keyCode;
-  const pos = input.selectionStart;
-
-  if (pos < 3) event.preventDefault();
-
-  const matrix = "+7 (___) ___-__-__";
-  let i = 0;
-  const def = matrix.replace(/\D/g, "");
-  const val = input.value.replace(/\D/g, "");
-  let new_value = matrix.replace(/[_\d]/g, (a) => {
-    return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
-  });
-
-  i = new_value.indexOf("_");
-  if (i !== -1) {
-    i < 5 && (i = 3);
-    new_value = new_value.slice(0, i);
-  }
-
-  const reg = matrix.substr(0, input.value.length).replace(/_+/g, (a) => {
-    return "\\d{1," + a.length + "}";
-  }).replace(/[+()]/g, "\\$&");
-
-  const regex = new RegExp("^" + reg + "$");
-  if (!regex.test(input.value) || input.value.length < 5 || (keyCode > 47 && keyCode < 58)) {
-    input.value = new_value;
-  }
-
-  if (event.type === "blur" && input.value.length < 5) {
-    input.value = "";
-  }
-
-  phoneNumber.value = input.value;
-  formattedPhoneNumber.value = formatPhoneNumber(phoneNumber.value);
-};
-
-const formatPhoneNumber = (number) => {
-  // Удаляем все символы, кроме цифр
-  const cleaned = number.replace(/\D/g, '');
-
-  // Проверяем, что номер имеет нужную длину
-  if (cleaned.length === 11 && cleaned.startsWith('7')) {
-    return cleaned; // Возвращаем номер в формате 71111111111
-  } else if (cleaned.length === 10) {
-    return '7' + cleaned; // Добавляем 7, если номер состоит из 10 цифр
-  }
-
-  return cleaned; // Возвращаем оригинальный номер, если он не соответствует формату
-};
-const blurHandler = (event) => {
-  if (event.target.value.length < 5) {
-    event.target.value = "";
-    phoneNumber.value = "";
-  }
-};
 const moveFocus = (event, direction) => {
   const current = event.target;
   if (current.value.length >= current.maxLength) {
@@ -223,7 +154,7 @@ const moveFocus = (event, direction) => {
 };
 
 const SendCode = async () => {
-  const res = await getConfCode(formattedPhoneNumber.value);
+  const res = await getConfCode(userPhoneNumber.value);
   if (res.result){
     changeModal.value = true
   }
@@ -231,14 +162,16 @@ const SendCode = async () => {
 
 const LogIn = async () => {
   const verificationCode = code.value.join(''); // Используйте code.value для доступа к массиву
-  const res = await Verify(formattedPhoneNumber.value, verificationCode);
+  const res = await Verify(userPhoneNumber.value, verificationCode);
 
   if (res.result) {
     changeModal.value = true;
     const token = localStorage.setItem('token', res.token);
     authorized.value = true
     closeModal()
-    if (res.user.role===0){
+
+    const resUser = await userStore.value.getProfile()
+    if (resUser.user.role===0){
       isAdmin.value = true
     }
   }
@@ -246,8 +179,8 @@ const LogIn = async () => {
 };
 
 const LogOut = async () =>{
-  localStorage.clear()
   await Logout();
+  localStorage.clear()
   authorized.value = false
 }
 
@@ -255,10 +188,10 @@ onMounted(async () => {
   const token = localStorage.getItem('token');
   if(token){
     const resUser = await userStore.value.getProfile()
-    if(resUser){
+    if(resUser.result){
       authorized.value = true
 
-      if(resUser.role === 0){
+      if(resUser.user.role === 0){
         isAdmin.value = true
       }
     }
@@ -269,7 +202,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@import "../../public/content/style/_mixins.scss";
+@use "../assets/style/mixins" as *;
 .btnLogIn{
   display: flex;
   gap: 10px;
@@ -282,13 +215,13 @@ onMounted(async () => {
     .btnLogIn__icon{
       width: 16px;
       height: 16px;
-      background: url("../../public/content/icons/profileHover.svg") no-repeat;
+      background: url("../assets/icons/profileHover.svg") no-repeat;
     }
-    box-shadow: 0px 1px 10.5px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 10.5px 0 rgba(0, 0, 0, 0.25);
   }
 
   &__icon{
-    background: url("../../public/content/icons/profile.svg") no-repeat;
+    background: url("../assets/icons/profile.svg") no-repeat;
     width: 16px;
     height: 16px;
     transition: background 0.2s ease;
@@ -306,13 +239,13 @@ onMounted(async () => {
     .btnAdmin__icon{
       width: 16px;
       height: 16px;
-      background: url("../../public/content/icons/adminHover.svg") no-repeat;
+      background: url("../assets/icons/adminHover.svg") no-repeat;
     }
-    box-shadow: 0px 1px 10.5px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 10.5px 0 rgba(0, 0, 0, 0.25);
   }
 
   &__icon{
-    background: url("../../public/content/icons/admin.svg") no-repeat;
+    background: url("../assets/icons/admin.svg") no-repeat;
     width: 16px;
     height: 16px;
     transition: background 0.2s ease;
@@ -338,5 +271,8 @@ onMounted(async () => {
 }
 .closeModal{
   @apply absolute top-1 -right-10;
+}
+#static-modal{
+  z-index: 10;
 }
 </style>

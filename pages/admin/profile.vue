@@ -3,7 +3,7 @@
 </script>
 
 <template>
-asdsad
+<p>dasdasd</p>
 </template>
 
 <style scoped lang="scss">

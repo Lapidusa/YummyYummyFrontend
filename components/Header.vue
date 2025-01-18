@@ -3,6 +3,9 @@
     <div class="header__logo">
       <Logo></Logo>
     </div>
+    <div class="header__stores">
+      <Stores></Stores>
+    </div>
     <div class="header__search">
       <Search></Search>
     </div>
@@ -15,15 +18,15 @@
 </template>
 
 <script setup lang="ts">
-import Logo from '../src/components/Logo.vue'
-import LogIn from '../src/components/LogIn.vue'
-import Search from '../src/components/Search.vue'
+import Logo from './Logo.vue'
+import LogIn from './LogIn.vue'
+import Search from './Search.vue'
 </script>
 
 <style scoped lang="scss">
 .header{
   display: flex;
-  gap: 40px;
+  gap: 20px;
   background: var(--light);
 
   &__logo{
