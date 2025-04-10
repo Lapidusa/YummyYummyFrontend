@@ -1,11 +1,14 @@
 import axios from "axios";
 import listUrl from "../server/ListURL.js";
-// import {Logout} from "~/server/responsesAPI.js";
 
 const api = axios.create({
     baseURL: `${listUrl.apiUrl}`,
 });
 
+export default api
+
+
+// import {Logout} from "~/server/responsesAPI.js";
 //Проверка ответа
 // api.interceptors.response.use((config) => {
 //
@@ -32,5 +35,3 @@ const api = axios.create({
 //             break
 //     }
 // })
-
-export default api

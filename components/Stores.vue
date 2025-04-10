@@ -58,8 +58,13 @@
     const res = await getStoresMain();
     if(res.result){
       stores.value = res.stores || {};
-      activeStore.value = stores.value[0] || {};
-      localStorage.setItem('store', JSON.stringify(activeStore.value.id));
+      if(localStorage.getItem('store')){
+        const idStore = JSON.parse(localStorage.getItem('store'))
+        activeStore.value = stores.value.find(store => store.id === idStore);
+      }else{
+        activeStore.value = stores.value[0] || {};
+        localStorage.setItem('store', JSON.stringify(activeStore.value.id));
+      }
       storePinia.setActiveStore(activeStore.value)
     }
     isLoading.value = true

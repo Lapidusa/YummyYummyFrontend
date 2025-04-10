@@ -203,8 +203,8 @@ const getProduct = async () => {
       descriptionProduct.value = thisProduct.value.description
       discountProduct.value = thisProduct.value.discount
       isPizza.value = thisProduct.value.isPizza
-      pizzaVariants.splice(0, pizzaVariants.length, ...thisProduct.value.pizzaVariants);// Присваиваем полученные данные
-      productVariants.splice(0, productVariants.length, ...thisProduct.value.productVariants);// Присваиваем полученные данные
+      pizzaVariants.splice(0, pizzaVariants.length, ...thisProduct.value.pizzaVariants);
+      productVariants.splice(0, productVariants.length, ...thisProduct.value.productVariants);
       ingredients.splice(0, ingredients.length, ...thisProduct.value.ingredients);
     } else {
       console.error('Category not found in response:', res);

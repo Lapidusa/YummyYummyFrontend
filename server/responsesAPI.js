@@ -15,39 +15,44 @@ export const useProfile = defineStore('profileValue', {
     {
         async getProfile() {
             const token = localStorage.getItem('token')
-            const res = await api.post("/User/GetUser", {token});
+            const res = await api.get("/user/get-user",
+                {
+                    headers: {
+                        'token': token
+                    },
+                });
             if (res.data) {
                 this.profile = res.data;
             } else {
                 console.error('No data received');
             }
             return this.profile;
-        },
+        }
     }
 });
 
-export async function getConfCode(phoneNumber)
+export async function GetConfCode(phoneNumber)
 {
-    const res = await api.post("/User/register-or-login", {
-        phoneNumber: phoneNumber
+    const res = await api.post("/user/send-sms", {
+        phone_number: phoneNumber
     });
     return res.data
 }
 
 export async function Verify(PhoneNumber, Code)
 {
-    const res = await api.post("/User/verify", {
-        PhoneNumber: PhoneNumber,
-        Code: Code
+    const res = await api.post("/user/verify-code", {
+        phone_number: PhoneNumber,
+        code: Code
     });
-    localStorage.setItem('token', res.data.token);
     console.log(res.data.token)
+    localStorage.setItem('token', res.data.token);
     return res.data
 }
 //Выход
 export async function Logout()
 {
-    const res = await api.post("/User/Logout",{
+    const res = await api.post("/user/logout",{
         token: localStorage.getItem('token')
     })
 
@@ -229,7 +234,7 @@ export async function DeleteProduct(productId) {
 }
 
 export async function ExportTables(){
-    const response = await api.get('/Exsim/export-excel', {
+    const response = await api.get('/Exsim/export-all', {
         responseType: 'blob',
     });
 

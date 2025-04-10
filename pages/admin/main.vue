@@ -1,4 +1,3 @@
-
 <template>
   <div class="flex gap-2">
     <p class=" text-xl">

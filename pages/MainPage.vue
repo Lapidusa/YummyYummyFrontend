@@ -10,7 +10,7 @@
   </div>
   <div v-for="category in activeStore.categories" :key="category.id">
     <p class="text-3xl">{{category.name}}</p>
-    <div class="grid-cols-4">
+    <div class="grid grid-cols-4 gap-4">
       <div :id="product.id" v-for="product in category.products" :key="product.id" @click="openModal(product)">
         <img :src="product.imageUrl" alt="" width="220"/>
         <p class="font-medium text-xl">{{product.name}}</p>
@@ -20,7 +20,6 @@
             от <b>{{product.pizzaVariants[0].price}} ₽ </b>
           </p>
         </div>
-
       </div>
     </div>
   </div>
@@ -68,10 +67,9 @@
 
 <script setup>
 
-import {storesStore} from "~/server/pinia.js";
+import {basketStore, storesStore} from "~/server/pinia.js";
 import {onMounted, ref} from "vue";
 import Basket from "~/components/Basket.vue";
-import {basketStore} from "~/server/pinia.js";
 
 const storeBasket = basketStore();
 const store = storesStore();

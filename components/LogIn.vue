@@ -68,7 +68,7 @@
     <template v-else>
       <div class="bg-white rounded-lg shadow-lg p-6 w-96 z-50 relative">
         <h2 class="text-xl font-semibold mb-4">Вход в аккаунт</h2>
-        <p class="mb-4">Введите номер телефона, чтобы войти или зарегистрироваться</p>
+        <p class="mb-4">Введите СМС-код</p>
         <div class="otp-container">
           <input type="text" maxlength="1" class="otp-input" v-model="code[0]" @input="moveFocus($event, 1)" />
           <input type="text" maxlength="1" class="otp-input" v-model="code[1]" @input="moveFocus($event, 1)" />
@@ -81,7 +81,7 @@
           <p class="text-center py-2">Неправильный или истекший код</p>
         </div>
         <button @click="LogIn" class="btnLogIn w-full justify-center">
-          <p class="btnLogIn__text">Получить код в SMS</p>
+          <p class="btnLogIn__text">Войти</p>
         </button>
         <div @click="closeModal" type="button" class="cursor-pointer">
           <img class="closeModal" src="../assets/icons/closeWhite.svg" alt="">
@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import {getConfCode, Logout, useProfile, Verify} from "../server/responsesAPI.js";
+import {GetConfCode, Logout, useProfile, Verify} from "../server/responsesAPI.js";
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import PhoneNumber from "~/components/PhoneNumber.vue";
@@ -110,10 +110,6 @@ const error = ref(false);
 const isAdmin = ref(false);
 const userStore = computed(()=>useProfile())
 let timeoutId = null;
-
-const navigateToAdmin = async () => {
-  await router.push('/admin');
-};
 
 const openDropdown = () => {
   clearTimeout(timeoutId);
@@ -154,24 +150,23 @@ const moveFocus = (event, direction) => {
 };
 
 const SendCode = async () => {
-  const res = await getConfCode(userPhoneNumber.value);
+  const res = await GetConfCode(userPhoneNumber.value);
   if (res.result){
     changeModal.value = true
   }
 }
 
 const LogIn = async () => {
-  const verificationCode = code.value.join(''); // Используйте code.value для доступа к массиву
+  const verificationCode = code.value.join('');
   const res = await Verify(userPhoneNumber.value, verificationCode);
 
   if (res.result) {
     changeModal.value = true;
-    const token = localStorage.setItem('token', res.token);
     authorized.value = true
     closeModal()
 
     const resUser = await userStore.value.getProfile()
-    if (resUser.user.role===0){
+    if (resUser.user.role===4){
       isAdmin.value = true
     }
   }
@@ -191,7 +186,7 @@ onMounted(async () => {
     if(resUser.result){
       authorized.value = true
 
-      if(resUser.user.role === 0){
+      if(resUser.user.role === 4){
         isAdmin.value = true
       }
     }

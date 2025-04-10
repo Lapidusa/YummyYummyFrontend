@@ -37,7 +37,6 @@ export const basketStore = defineStore('Basket', {
                     return item.id === product.id && item.variants.some(variant => variant.id === product.variants[0].id);
                 }
             });
-            console.log(existingProduct)
             if (existingProduct) {
                 existingProduct.quantity += 1; // Увеличиваем количество на 1
             } else {

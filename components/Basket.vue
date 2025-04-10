@@ -92,7 +92,7 @@ const calculateTotalPrice = (items) => {
   return items.reduce((total, item) => {
     const variants = item.isPizza ? item.pizzaVariants : item.variants;
     const priceSum = variants.reduce((sum, variant) => sum + variant.price, 0);
-    return total + priceSum * item.quantity; // Учитываем количество каждого продукта
+    return total + priceSum * item.quantity;
   }, 0);
 };
 

@@ -12,18 +12,19 @@
 import {useProfile} from "../server/responsesAPI.js"
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
+import SidebarAdmin from "~/components/SidebarAdmin.vue";
 const router = useRouter();
 const userStore = computed(()=>useProfile())
 const isLoading = ref(false);
 
-const valideToken = async () =>{
+const validateToken = async () =>{
   const res = await userStore.value.getProfile()
-  if (!res.result || res.user.role!==0){
+  if (!res.result || res.user.role!==4){
     await router.push('/')
   }
 }
 onMounted(async ()=>{
-  await valideToken();
+  await validateToken();
   isLoading.value = true
 })
 </script>
@@ -40,7 +41,9 @@ $indent: 30px;
   margin: 15px;
 }
 </style>
-nameProduct
-descriptionProduct
-discountProduct
-priceProduct
+
+
+<!--nameProduct-->
+<!--descriptionProduct-->
+<!--discountProduct-->
+<!--priceProduct-->

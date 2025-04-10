@@ -24,7 +24,9 @@
     Создать магазин
   </div>
 </div>
-
+  <div class="">
+    <MapComponent></MapComponent>
+  </div>
 <div
     id="static-modal"
     data-modal-backdrop="static"
@@ -67,7 +69,7 @@
     </div>
     <PhoneNumber v-model="storePhoneNumber"/>
     <button @click="createStore" class="btnLogIn w-full justify-center">
-      <p class="btnLogIn__text">Создать</p>
+      <p class="btn__createStore">Создать</p>
     </button>
 
     <div @click="closeModal" type="button" class="cursor-pointer">
@@ -82,6 +84,7 @@ import {CreateStore, GetAllStores} from "~/server/responsesAPI.js";
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
 import PhoneNumber from "~/components/PhoneNumber.vue";
+import MapComponent from "~/components/Map.vue";
 const router = useRouter();
 const stores = ref(0);
 
@@ -125,12 +128,6 @@ const createStore = async () => {
 
   await GetStores()
 };
-// storeAddress.value = null
-// startWorkingHours.value = null
-// endWorkingHours.value = null
-// startDeliveryTime.value = null
-// endDeliveryTime.value = null
-// storePhoneNumber.value = ''
 
 onMounted(async ()=>{
   await GetStores()
